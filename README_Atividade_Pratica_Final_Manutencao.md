@@ -63,6 +63,8 @@ Os alunos deverão justificar suas decisões e perceber que um diagnóstico adeq
 
 ## Parte 2 - Simulador de chamados técnicos em HTML
 
+https://rodheisenberg.github.io/atividade_pratica_ManutencaodeComputadore/index.html 
+
 Na segunda etapa, cada aluno deverá resolver individualmente uma sequência de chamados técnicos da empresa fictícia **MaceloComputing Tech**.
 
 Durante o dia surgiram **5 chamados diferentes**, cada um envolvendo sintomas e contextos distintos dos trabalhados na atividade do Miro.
