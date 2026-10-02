@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Atividade Prática Final - Instalação e Manutenção de Computadores</title>
+<style>
+  :root{
+    --bg:#07111f;
+    --panel:#0d1b2e;
+    --panel2:#112742;
+    --line:#21466e;
+    --text:#edf6ff;
+    --muted:#9fb8cf;
+    --accent:#55d6ff;
+    --accent2:#8a7dff;
+    --ok:#46d995;
+    --bad:#ff6b7a;
+    --warn:#ffd166;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(85,214,255,.12), transparent 35%),
+      radial-gradient(circle at 80% 30%, rgba(138,125,255,.10), transparent 30%),
+      linear-gradient(180deg,#050b14 0%,#07111f 100%);
+    color:var(--text);
+    min-height:100vh;
+  }
+  .shell{max-width:1180px;margin:0 auto;padding:28px}
+  .hero{
+    border:1px solid var(--line);
+    background:linear-gradient(135deg,rgba(17,39,66,.95),rgba(7,17,31,.95));
+    border-radius:24px;
+    padding:28px;
+    box-shadow:0 0 40px rgba(85,214,255,.08);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero:after{
+    content:"";position:absolute;right:-80px;top:-80px;width:260px;height:260px;border:1px solid rgba(85,214,255,.12);border-radius:50%;
+  }
+  .eyebrow{color:var(--accent);font-size:13px;font-weight:bold;letter-spacing:1.4px;text-transform:uppercase}
+  h1{font-size:38px;line-height:1.1;margin:12px 0 8px}
+  .subtitle{color:var(--muted);font-size:17px;max-width:850px;line-height:1.55}
+  .company{
+    display:flex;gap:14px;align-items:center;margin-top:22px;padding:14px 16px;border:1px solid var(--line);border-radius:16px;background:rgba(5,11,20,.55)
+  }
+  .logo{
+    width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));
+    display:grid;place-items:center;color:#07111f;font-weight:900;font-size:22px;
+  }
+  .grid{display:grid;grid-template-columns:280px 1fr;gap:22px;margin-top:22px}
+  .sidebar,.main{
+    border:1px solid var(--line);background:rgba(13,27,46,.9);border-radius:20px;
+  }
+  .sidebar{padding:18px;height:max-content;position:sticky;top:16px}
+  .main{padding:24px}
+  .progress-wrap{margin-bottom:18px}
+  .progress-label{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin-bottom:8px}
+  .progress{height:10px;background:#081421;border-radius:999px;overflow:hidden;border:1px solid #17314e}
+  .progress > div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.3s}
+  .ticket-list{display:grid;gap:10px;margin-top:18px}
+  .ticket-chip{padding:12px;border:1px solid #1d3c5f;border-radius:12px;color:var(--muted);font-size:13px;background:#0a1727}
+  .ticket-chip.active{border-color:var(--accent);color:var(--text);box-shadow:0 0 16px rgba(85,214,255,.08)}
+  .ticket-chip.done{border-color:rgba(70,217,149,.5);color:#b8ffd9}
+  .case-image{
+    width:100%;height:235px;border-radius:18px;object-fit:cover;border:1px solid var(--line);background:#091522;margin:12px 0 20px
+  }
+  .ticket-badge{display:inline-block;padding:7px 10px;border-radius:999px;background:#0a2135;border:1px solid #1f5d83;color:var(--accent);font-size:12px;font-weight:bold}
+  h2{font-size:28px;margin:12px 0 8px}
+  .case-text{color:var(--muted);line-height:1.65;font-size:16px}
+  .question-card{margin-top:22px;border:1px solid #21466e;background:linear-gradient(180deg,#0d1b2e,#091522);border-radius:18px;padding:22px}
+  .qnum{font-size:12px;color:var(--accent);font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+  .question{font-size:20px;line-height:1.45;margin:8px 0 16px}
+  .options{display:grid;gap:10px}
+  .option{
+    width:100%;text-align:left;padding:14px 16px;min-height:76px;display:flex;align-items:center;border-radius:12px;border:1px solid #244c73;background:#0c1a2c;color:var(--text);cursor:pointer;font-size:15px;line-height:1.4;transition:.15s
+  }
+  .option:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .option.correct{border-color:var(--ok);background:rgba(70,217,149,.09)}
+  .option.wrong{border-color:var(--bad);background:rgba(255,107,122,.08)}
+  .feedback{margin-top:14px;padding:14px 16px;border-radius:12px;display:none;line-height:1.5}
+  .feedback.ok{display:block;border:1px solid rgba(70,217,149,.45);background:rgba(70,217,149,.08);color:#caffdf}
+  .feedback.bad{display:block;border:1px solid rgba(255,107,122,.45);background:rgba(255,107,122,.08);color:#ffd1d6}
+  .next-btn{margin-top:14px;border:0;border-radius:12px;padding:13px 18px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#07111f;font-weight:bold;cursor:pointer;display:none}
+  .next-btn.show{display:inline-block}
+  .final{display:none}
+  .final.show{display:block}
+  .summary-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:18px}
+  .summary-card{border:1px solid var(--line);border-radius:14px;padding:16px;background:#0a1727}
+  .summary-card h3{margin:0 0 8px;color:var(--accent);font-size:16px}
+  .summary-card p{margin:0;color:var(--muted);line-height:1.5;font-size:14px}
+  .finish{margin-top:22px;padding:18px;border-radius:16px;border:1px solid rgba(70,217,149,.4);background:rgba(70,217,149,.08)}
+  .mini{font-size:12px;color:var(--muted);line-height:1.5;margin-top:12px}
+  @media(max-width:850px){.grid{grid-template-columns:1fr}.sidebar{position:static}.summary-grid{grid-template-columns:1fr}h1{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <section class="hero">
+    <div class="eyebrow">Atividade Prática Final</div>
+    <h1>UC Instalação e Manutenção de Computadores</h1>
+    <p class="subtitle">Você integra a equipe técnica da <strong>MaceloComputing Tech</strong>. Hoje surgiram 5 chamados diferentes e sua missão é diagnosticar cada situação com base em sintomas, evidências e boas práticas. São 25 decisões ao todo. Você só avança quando acertar.</p>
+    <div class="company">
+      <div class="logo">MC</div>
+      <div>
+        <strong>MaceloComputing Tech</strong><br>
+        <span style="color:var(--muted)">Central de suporte e manutenção de equipamentos</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <aside class="sidebar">
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Progresso</span><span id="progressText">0/25</span></div>
+        <div class="progress"><div id="progressBar"></div></div>
+      </div>
+      <div class="ticket-list" id="ticketList"></div>
+      <p class="mini">Leia o cenário com atenção. Algumas alternativas parecem plausíveis, mas apenas uma representa a melhor decisão técnica naquele momento.</p>
+    </aside>
+
+    <main class="main">
+      <div id="caseArea"></div>
+      <div id="finalArea" class="final"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+const cases = [
+  {
+    title:"Chamado 01 - Estação reiniciando sob carga",
+    image:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%271200%27%20height%3D%27500%27%3E%3Crect%20width%3D%271200%27%20height%3D%27500%27%20fill%3D%27%23081828%27/%3E%3Crect%20x%3D%27160%27%20y%3D%27100%27%20width%3D%27520%27%20height%3D%27300%27%20rx%3D%2724%27%20fill%3D%27%230c2036%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%275%27/%3E%3Crect%20x%3D%27205%27%20y%3D%27145%27%20width%3D%27430%27%20height%3D%27180%27%20rx%3D%2712%27%20fill%3D%27%2307111f%27/%3E%3Ccircle%20cx%3D%27280%27%20cy%3D%27370%27%20r%3D%2718%27%20fill%3D%27%2346d995%27/%3E%3Ccircle%20cx%3D%27340%27%20cy%3D%27370%27%20r%3D%2718%27%20fill%3D%27%23ffd166%27/%3E%3Crect%20x%3D%27760%27%20y%3D%27155%27%20width%3D%27210%27%20height%3D%27190%27%20rx%3D%2718%27%20fill%3D%27%230d1b2e%27%20stroke%3D%27%238a7dff%27%20stroke-width%3D%275%27/%3E%3Cpath%20d%3D%27M805%20245h120%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%2712%27/%3E%3Cpath%20d%3D%27M865%20185v120%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%2712%27/%3E%3Ctext%20x%3D%27600%27%20y%3D%27455%27%20text-anchor%3D%27middle%27%20fill%3D%27%23edf6ff%27%20font-family%3D%27Arial%27%20font-size%3D%2734%27%3EEsta%C3%A7%C3%A3o%20reiniciando%20sob%20carga%3C/text%3E%3C/svg%3E",
+    text:"Uma estação do setor de edição funciona normalmente em tarefas leves, mas reinicia sozinha quando o usuário abre um software de renderização. O computador recebeu uma placa de vídeo mais potente há duas semanas. Não há tela azul. O gabinete está limpo, a temperatura da CPU está dentro do normal e os reinícios acontecem principalmente quando CPU e GPU ficam em uso intenso.",
+    qs:[
+      {q:"Qual é a melhor primeira hipótese técnica?",a:1,opts:["Possível falha de driver provocada pelo aumento de uso da placa de vídeo","Fonte de alimentação insuficiente ou instável durante picos de consumo","Possível erro de memória que aparece somente durante tarefas mais pesadas","Problema térmico na placa de vídeo quando o processamento fica mais intenso"],ok:"Correto. O comportamento ligado à carga combinada de CPU e GPU aponta primeiro para alimentação. Uma placa de vídeo mais exigente pode ultrapassar a capacidade real da fonte.",bad:"Pense no padrão do defeito: ele aparece quando o consumo elétrico aumenta, não durante tarefas simples."},
+      {q:"Qual informação técnica deve ser verificada antes de trocar qualquer componente?",a:2,opts:["Temperaturas máximas da CPU e da GPU previstas durante o uso do equipamento","Capacidade de memória instalada e frequência configurada pela placa-mãe","Potência real da fonte, conectores disponíveis e consumo recomendado da GPU","Versão do driver gráfico e requisitos de software indicados pelo fabricante"],ok:"Isso. Antes de substituir algo, compare especificações da fonte e da placa de vídeo, incluindo potência, conectores PCIe e recomendação do fabricante.",bad:"A decisão precisa ser baseada em especificações elétricas e compatibilidade, não em itens sem relação com a falha."},
+      {q:"Qual teste ajuda mais a confirmar a hipótese?",a:0,opts:["Executar carga controlada, monitorar estabilidade e comparar com uma fonte adequada","Executar diagnóstico de memória durante carga para procurar erros intermitentes","Atualizar o driver gráfico e repetir a renderização observando o comportamento","Monitorar apenas as temperaturas da CPU e GPU durante uma tarefa de renderização"],ok:"Perfeito. O objetivo é reproduzir a carga e verificar se a alimentação permanece estável, preferencialmente comparando com uma fonte adequada e conhecida.",bad:"Procure um teste que reproduza o cenário de alta carga e permita verificar a alimentação."},
+      {q:"Se a fonte atual for de 450 W genérica e a GPU exigir recomendação de 650 W de boa qualidade, qual ação é mais correta?",a:3,opts:["Manter a fonte atual e limitar por software o desempenho máximo da placa de vídeo","Reduzir temporariamente o consumo da GPU e considerar o equipamento solucionado","Adicionar memória RAM para diminuir a carga exigida da fonte durante a renderização","Instalar uma fonte de qualidade compatível com a carga e os conectores necessários"],ok:"Correto. A troca deve considerar qualidade, potência útil, proteções e conectores corretos.",bad:"Ligar não significa operar com segurança sob carga. Considere potência, estabilidade e conectores."},
+      {q:"Qual critério valida a correção?",a:2,opts:["O computador inicia várias vezes e permanece estável durante tarefas leves de escritório","O sistema reconhece corretamente a GPU e não apresenta alertas no Gerenciador de Dispositivos","O computador conclui testes de carga sem reiniciar e mantém parâmetros estáveis","O software de renderização abre normalmente e permite carregar um projeto de teste"],ok:"Exato. A validação deve reproduzir a situação que causava o defeito e confirmar estabilidade.",bad:"A validação precisa provar que o sintoma original não ocorre mais nas mesmas condições."}
+    ],solution:"Diagnóstico final: fonte de alimentação subdimensionada ou inadequada após upgrade de GPU. Ação recomendada: confirmar especificações, testar sob carga e substituir por fonte compatível e de boa qualidade."
+  },
+  {
+    title:"Chamado 02 - Computador não reconhece toda a memória",
+    image:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%271200%27%20height%3D%27500%27%3E%3Crect%20width%3D%271200%27%20height%3D%27500%27%20fill%3D%27%23091522%27/%3E%3Crect%20x%3D%27130%27%20y%3D%2790%27%20width%3D%27940%27%20height%3D%27300%27%20rx%3D%2728%27%20fill%3D%27%2310243c%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%274%27/%3E%3Crect%20x%3D%27235%27%20y%3D%27145%27%20width%3D%27230%27%20height%3D%27160%27%20rx%3D%2712%27%20fill%3D%27%23142f4d%27%20stroke%3D%27%238a7dff%27%20stroke-width%3D%275%27/%3E%3Crect%20x%3D%27505%27%20y%3D%27145%27%20width%3D%27230%27%20height%3D%27160%27%20rx%3D%2712%27%20fill%3D%27%23142f4d%27%20stroke%3D%27%238a7dff%27%20stroke-width%3D%275%27/%3E%3Crect%20x%3D%27775%27%20y%3D%27145%27%20width%3D%27120%27%20height%3D%27160%27%20rx%3D%2712%27%20fill%3D%27%230c1a2c%27%20stroke%3D%27%2321466e%27%20stroke-width%3D%275%27/%3E%3Cpath%20d%3D%27M285%20190h130M285%20230h130M555%20190h130M555%20230h130%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%2710%27/%3E%3Ctext%20x%3D%27600%27%20y%3D%27455%27%20text-anchor%3D%27middle%27%20fill%3D%27%23edf6ff%27%20font-family%3D%27Arial%27%20font-size%3D%2734%27%3EDiagn%C3%B3stico%20de%20mem%C3%B3ria%20RAM%3C/text%3E%3C/svg%3E",
+    text:"Um computador recebeu um segundo módulo de memória RAM. O sistema inicia, mas mostra apenas 8 GB, embora existam dois módulos de 8 GB instalados. O técnico confirma que o sistema operacional é 64 bits. Um dos módulos foi comprado recentemente, com mesma capacidade, mas frequência e fabricante diferentes do módulo original.",
+    qs:[
+      {q:"Qual deve ser a primeira ação de diagnóstico?",a:1,opts:["Atualizar a BIOS e testar novamente antes de verificar fisicamente os módulos instalados","Desligar, aplicar ESD, reassentar os módulos e testar módulo e slot separadamente","Remover o módulo antigo e manter somente o novo para verificar a capacidade total","Entrar no sistema operacional e executar apenas um teste de desempenho de memória"],ok:"Correto. O diagnóstico deve isolar módulo e slot, garantindo encaixe correto e identificando se o problema acompanha a memória ou o soquete.",bad:"Antes de mexer em software, isole fisicamente os módulos e slots com segurança ESD."},
+      {q:"Se ambos os módulos funcionam sozinhos no slot A, mas nenhum é reconhecido no slot B, o que isso sugere?",a:0,opts:["Possível falha no slot B, no contato elétrico ou no circuito associado a esse canal","Possível incompatibilidade entre o sistema operacional e a frequência dos módulos","Possível defeito simultâneo nos dois módulos quando utilizados em configuração dupla","Possível limitação do processador para trabalhar com dois módulos de memória instalados"],ok:"Isso. O padrão aponta para o slot ou circuito relacionado, não para os módulos.",bad:"Observe o padrão: os dois módulos funcionam em um slot e falham no outro."},
+      {q:"Qual consulta técnica é mais importante antes de concluir incompatibilidade?",a:3,opts:["Documentação do processador com limites de frequência e suporte ao controlador de memória","Documentação do sistema operacional sobre memória máxima reconhecida pela edição instalada","Especificações dos módulos para comparar tensão, frequência e temporizações informadas","Manual da placa-mãe com tipos, capacidades, frequências e ocupação recomendada dos slots"],ok:"Perfeito. O manual informa limites de capacidade, ordem de instalação, frequência e compatibilidade do conjunto.",bad:"A conclusão depende de especificações da placa-mãe, não de software de usuário."},
+      {q:"Se o manual exige que dois módulos sejam instalados nos slots A2 e B2 para dual channel, mas eles estão em A1 e A2, qual é a melhor ação?",a:2,opts:["Manter os módulos onde estão e alterar manualmente a frequência da memória na BIOS","Remover um módulo e trabalhar em canal único para evitar qualquer incompatibilidade","Reposicionar os módulos nos slots indicados pelo manual e realizar novos testes","Atualizar o sistema operacional antes de modificar a posição física dos módulos"],ok:"Correto. Seguir a população recomendada dos slots pode resolver o reconhecimento e garantir funcionamento adequado.",bad:"A disposição dos módulos deve seguir o manual da placa-mãe."},
+      {q:"Qual validação fecha o chamado?",a:1,opts:["A BIOS reconhece os dois módulos, mesmo que o sistema ainda apresente quantidade diferente","BIOS e sistema reconhecem 16 GB, e o teste de memória termina sem apresentar erros","O sistema operacional inicia rapidamente e não apresenta mensagens durante o carregamento","O software de diagnóstico identifica os dois módulos, mesmo com falhas ocasionais no teste"],ok:"Correto. A validação envolve reconhecimento em firmware e sistema, além de teste de estabilidade da memória.",bad:"É preciso confirmar capacidade reconhecida e ausência de erros de memória."}
+    ],solution:"Diagnóstico final: instalação inadequada, slot com problema ou incompatibilidade de configuração. Ação: testar módulos e slots individualmente, consultar o manual e instalar na configuração correta."
+  },
+  {
+    title:"Chamado 03 - PC muito lento após atualização",
+    image:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%271200%27%20height%3D%27500%27%3E%3Crect%20width%3D%271200%27%20height%3D%27500%27%20fill%3D%27%2307111f%27/%3E%3Crect%20x%3D%27150%27%20y%3D%2780%27%20width%3D%27900%27%20height%3D%27320%27%20rx%3D%2728%27%20fill%3D%27%230d1b2e%27%20stroke%3D%27%2321466e%27%20stroke-width%3D%274%27/%3E%3Crect%20x%3D%27210%27%20y%3D%27130%27%20width%3D%27400%27%20height%3D%27220%27%20rx%3D%2715%27%20fill%3D%27%23081421%27/%3E%3Cpath%20d%3D%27M250%20305L315%20240l70%2040%2085-115%2095%2055%27%20fill%3D%27none%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%2710%27/%3E%3Crect%20x%3D%27690%27%20y%3D%27140%27%20width%3D%27260%27%20height%3D%2742%27%20rx%3D%2720%27%20fill%3D%27%2317314e%27/%3E%3Crect%20x%3D%27690%27%20y%3D%27210%27%20width%3D%27220%27%20height%3D%2742%27%20rx%3D%2720%27%20fill%3D%27%2317314e%27/%3E%3Crect%20x%3D%27690%27%20y%3D%27280%27%20width%3D%27180%27%20height%3D%2742%27%20rx%3D%2720%27%20fill%3D%27%2317314e%27/%3E%3Ctext%20x%3D%27600%27%20y%3D%27455%27%20text-anchor%3D%27middle%27%20fill%3D%27%23edf6ff%27%20font-family%3D%27Arial%27%20font-size%3D%2734%27%3EDesempenho%20ap%C3%B3s%20atualiza%C3%A7%C3%A3o%3C/text%3E%3C/svg%3E",
+    text:"Após uma grande atualização do sistema operacional, um computador do financeiro passou a demorar cerca de 8 minutos para iniciar. O usuário relata travamentos ao abrir planilhas grandes. O equipamento possui 8 GB de RAM, SSD SATA de 240 GB com 92% de ocupação e dezenas de programas configurados para iniciar junto com o sistema.",
+    qs:[
+      {q:"Qual leitura inicial é mais adequada?",a:2,opts:["O SSD provavelmente apresenta falha física e deve ser substituído antes de qualquer medição","O problema está principalmente na placa-mãe porque surgiu logo após uma atualização","Há indícios de pouco espaço, excesso de inicialização e possível pressão de memória","A atualização deve ser revertida imediatamente porque é a causa mais provável da lentidão"],ok:"Correto. O cenário traz múltiplos fatores de desempenho. O diagnóstico deve medir antes de substituir peças.",bad:"Evite atribuir tudo a uma peça. Há vários indicadores claros no próprio cenário."},
+      {q:"Qual ferramenta do próprio sistema ajuda a identificar o impacto na inicialização?",a:0,opts:["Gerenciador de Tarefas, usando a área de aplicativos configurados para iniciar com o sistema","Gerenciamento de Disco, verificando partições e letras atribuídas às unidades instaladas","Visualizador de Eventos, procurando somente erros críticos ocorridos durante a inicialização","Gerenciador de Dispositivos, verificando apenas os drivers relacionados ao armazenamento"],ok:"Isso. A aba de inicialização mostra programas configurados para iniciar com o sistema e seu impacto.",bad:"Procure uma ferramenta que mostre processos e inicialização do sistema."},
+      {q:"Por que 92% de ocupação do SSD merece atenção?",a:1,opts:["Porque pouco espaço pode afetar temporários, atualizações e operações internas do sistema","Porque o SSD reduz automaticamente sua frequência sempre que ultrapassa 90% de ocupação","Porque o sistema passa a utilizar somente a memória RAM e deixa de gravar arquivos no SSD","Porque o sistema operacional desativa serviços essenciais ao detectar pouco espaço disponível"],ok:"Correto. Espaço livre insuficiente afeta operação e manutenção do sistema, principalmente após grandes atualizações.",bad:"Relacione armazenamento quase cheio com arquivos temporários, atualização e uso diário."},
+      {q:"Qual ação combina melhor software e manutenção preventiva?",a:3,opts:["Excluir arquivos grandes manualmente, desativar atualizações e manter os programas de inicialização","Reinstalar o sistema, manter os arquivos e substituir a memória antes de realizar medições","Desativar serviços do sistema e antivírus para reduzir consumo sem alterar o armazenamento","Revisar inicialização, liberar espaço, verificar o SSD e avaliar upgrades conforme medições"],ok:"Perfeito. A solução deve combinar diagnóstico, organização do sistema e possível upgrade fundamentado.",bad:"A resposta precisa preservar dados e avaliar causas antes de medidas drásticas."},
+      {q:"Quando um upgrade para 16 GB de RAM faz sentido neste caso?",a:0,opts:["Quando o monitoramento mostra uso frequente de memória próximo ao limite durante a rotina","Quando o computador possui SSD, pois equipamentos com SSD sempre precisam de mais memória","Quando o sistema operacional foi atualizado, independentemente do consumo observado de RAM","Quando a CPU permanece abaixo de 50%, mesmo que o uso de memória continue relativamente baixo"],ok:"Correto. Upgrade deve ser justificado por evidência de uso, não apenas por suposição.",bad:"Pense em evidência de consumo de memória durante a carga real do usuário."}
+    ],solution:"Diagnóstico final: combinação de SSD quase cheio, excesso de programas na inicialização e possível limitação de RAM. Ação: medir uso, revisar inicialização, liberar espaço, verificar saúde do SSD e avaliar upgrades com base em evidências."
+  },
+  {
+    title:"Chamado 04 - Notebook sem carregar corretamente",
+    image:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%271200%27%20height%3D%27500%27%3E%3Crect%20width%3D%271200%27%20height%3D%27500%27%20fill%3D%27%23081421%27/%3E%3Crect%20x%3D%27120%27%20y%3D%27105%27%20width%3D%27600%27%20height%3D%27250%27%20rx%3D%2724%27%20fill%3D%27%230d1b2e%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%275%27/%3E%3Crect%20x%3D%27170%27%20y%3D%27145%27%20width%3D%27500%27%20height%3D%27150%27%20rx%3D%2712%27%20fill%3D%27%2307111f%27/%3E%3Crect%20x%3D%27800%27%20y%3D%27150%27%20width%3D%27190%27%20height%3D%27130%27%20rx%3D%2718%27%20fill%3D%27%23122b47%27%20stroke%3D%27%238a7dff%27%20stroke-width%3D%275%27/%3E%3Cpath%20d%3D%27M990%20215h90v80%27%20fill%3D%27none%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%2712%27/%3E%3Cpath%20d%3D%27M850%20215h90%27%20stroke%3D%27%23ffd166%27%20stroke-width%3D%2712%27/%3E%3Ctext%20x%3D%27600%27%20y%3D%27455%27%20text-anchor%3D%27middle%27%20fill%3D%27%23edf6ff%27%20font-family%3D%27Arial%27%20font-size%3D%2734%27%3EFonte%20e%20carregamento%20do%20notebook%3C/text%3E%3C/svg%3E",
+    text:"Um notebook apresenta o aviso 'conectado, sem carregar'. A bateria está em 18%. O usuário trouxe uma fonte compatível fisicamente, mas ela não é a original. A etiqueta informa tensão correta, porém corrente máxima inferior à recomendada pelo fabricante. O notebook funciona conectado, mas perde carga lentamente quando o processador é muito utilizado.",
+    qs:[
+      {q:"Qual detalhe é mais importante para o diagnóstico?",a:3,opts:["A bateria apresenta pouca carga e por isso impede que qualquer fonte externa trabalhe corretamente","O conector da fonte encaixa fisicamente, indicando que a alimentação deveria ser totalmente compatível","A tensão indicada está correta, então a corrente disponível deixa de ser relevante para o diagnóstico","A fonte possui tensão correta, mas pode fornecer corrente e potência abaixo da demanda do notebook"],ok:"Correto. A fonte pode encaixar e ter tensão correta, mas ainda ser incapaz de fornecer potência suficiente.",bad:"Compatibilidade física não garante capacidade elétrica adequada."},
+      {q:"Qual cálculo simples ajuda a comparar fontes?",a:1,opts:["Comparar a frequência da rede elétrica com a corrente máxima informada na etiqueta da fonte","Calcular a potência aproximada multiplicando a tensão pela corrente informada na fonte","Multiplicar a capacidade da bateria pela tensão indicada no carregador para obter a potência","Somar tensão e corrente nominais para comparar diretamente a capacidade de duas fontes"],ok:"Isso. Multiplicar tensão por corrente ajuda a estimar a potência disponível em watts.",bad:"A comparação deve envolver capacidade elétrica de entrega da fonte."},
+      {q:"Se o notebook exige 19 V e 4,74 A, qual potência aproximada é necessária?",a:2,opts:["19 W","47 W","90 W","190 W"],ok:"Correto. 19 x 4,74 é aproximadamente 90 W.",bad:"Multiplique 19 por 4,74. O resultado fica próximo de 90."},
+      {q:"A fonte usada fornece 19 V e 3,42 A. O que isso indica?",a:0,opts:["Ela fornece aproximadamente 65 W, valor inferior aos cerca de 90 W exigidos pelo notebook","Ela fornece potência suficiente, pois a tensão é idêntica à especificada pelo fabricante","Ela entrega aproximadamente 120 W e possui margem suficiente para carregar durante uso intenso","Ela não pode ser comparada pela potência, pois somente a tensão interfere no funcionamento"],ok:"Correto. A fonte é subdimensionada e pode manter o equipamento ligado sem conseguir alimentar carga e bateria simultaneamente.",bad:"Compare a potência disponível com a exigida pelo notebook."},
+      {q:"Qual é a solução técnica mais adequada?",a:3,opts:["Manter a fonte atual e limitar o desempenho do processador para reduzir o consumo do notebook","Substituir primeiro a bateria, já que a fonte mantém o notebook ligado quando conectado","Atualizar drivers e sistema antes de considerar qualquer alteração no conjunto de alimentação","Usar fonte com tensão, corrente, potência e conector corretos e depois reavaliar a bateria"],ok:"Perfeito. Primeiro corrija a alimentação externa. Depois avalie a bateria se o problema persistir.",bad:"A fonte já apresenta especificação insuficiente. Resolva isso antes de condenar a bateria."}
+    ],solution:"Diagnóstico final: fonte alternativa subdimensionada em corrente/potência. Ação: substituir por fonte compatível com a especificação do fabricante e reavaliar o comportamento da bateria."
+  },
+  {
+    title:"Chamado 05 - Periférico USB desconectando",
+    image:"data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20width%3D%271200%27%20height%3D%27500%27%3E%3Crect%20width%3D%271200%27%20height%3D%27500%27%20fill%3D%27%2307111f%27/%3E%3Crect%20x%3D%27150%27%20y%3D%27110%27%20width%3D%27360%27%20height%3D%27220%27%20rx%3D%2722%27%20fill%3D%27%230d1b2e%27%20stroke%3D%27%2321466e%27%20stroke-width%3D%274%27/%3E%3Crect%20x%3D%27215%27%20y%3D%27160%27%20width%3D%27230%27%20height%3D%27120%27%20rx%3D%2712%27%20fill%3D%27%23081421%27/%3E%3Crect%20x%3D%27690%27%20y%3D%27125%27%20width%3D%27330%27%20height%3D%27190%27%20rx%3D%2720%27%20fill%3D%27%2310243c%27%20stroke%3D%27%2355d6ff%27%20stroke-width%3D%275%27/%3E%3Ccircle%20cx%3D%27760%27%20cy%3D%27220%27%20r%3D%2734%27%20fill%3D%27%238a7dff%27/%3E%3Ccircle%20cx%3D%27860%27%20cy%3D%27220%27%20r%3D%2734%27%20fill%3D%27%2355d6ff%27/%3E%3Cpath%20d%3D%27M510%20220h180%27%20stroke%3D%27%23ffd166%27%20stroke-width%3D%2710%27%20stroke-dasharray%3D%2718%2018%27/%3E%3Ctext%20x%3D%27600%27%20y%3D%27455%27%20text-anchor%3D%27middle%27%20fill%3D%27%23edf6ff%27%20font-family%3D%27Arial%27%20font-size%3D%2734%27%3EInstabilidade%20em%20perif%C3%A9rico%20USB%3C/text%3E%3C/svg%3E",
+    text:"Um computador de recepção usa leitor biométrico USB e impressora térmica. O leitor biométrico desconecta aleatoriamente, principalmente quando conectado às portas frontais do gabinete. Nas portas traseiras ele funciona por mais tempo. Outros dispositivos simples, como pendrive, parecem funcionar normalmente na frente. O sistema mostra avisos ocasionais de dispositivo USB reconectado.",
+    qs:[
+      {q:"Qual é a melhor hipótese inicial?",a:1,opts:["Possível conflito entre o driver do leitor e o software utilizado para registrar a biometria","Instabilidade no conjunto USB frontal, incluindo alimentação, cabo ou conexão interna","Possível defeito no leitor biométrico que se manifesta somente após alguns minutos de uso","Possível configuração de economia de energia afetando igualmente todas as portas USB do computador"],ok:"Correto. O padrão muda conforme a porta usada, o que direciona o diagnóstico para o conjunto frontal e sua alimentação/conexão.",bad:"Compare o comportamento nas portas frontais e traseiras."},
+      {q:"Por que um pendrive funcionar não elimina a hipótese de alimentação USB inadequada?",a:2,opts:["Porque um pendrive pode exigir menos corrente e tolerar condições que afetam outro periférico","Porque o sistema operacional fornece níveis diferentes de tensão conforme o tipo de arquivo acessado","Porque leitores biométricos utilizam um protocolo USB diferente e incompatível com portas frontais","Porque o funcionamento do pendrive comprova somente que o driver USB está instalado no sistema"],ok:"Isso. Dispositivos distintos podem ter demandas e tolerâncias diferentes.",bad:"Considere consumo elétrico e sensibilidade diferentes entre periféricos."},
+      {q:"Qual inspeção física é mais adequada?",a:0,opts:["Inspecionar cabo frontal, conector interno, contatos, folgas, danos e sujeira no conjunto USB","Atualizar os drivers USB e considerar o problema físico descartado caso o dispositivo seja reconhecido","Substituir a fonte do computador antes de verificar cabos, conectores e condições das portas frontais","Desmontar o leitor biométrico e verificar seus componentes internos antes de testar outras portas"],ok:"Correto. O caminho físico da porta frontal precisa ser inspecionado antes de conclusões de software.",bad:"O defeito muda conforme a porta física usada. Inspecione o caminho correspondente."},
+      {q:"Qual teste ajuda a isolar a causa?",a:3,opts:["Testar outro leitor somente nas portas frontais e comparar o tempo até ocorrer uma nova desconexão","Atualizar o driver do leitor e repetir o teste exclusivamente na mesma porta frontal utilizada","Testar um pendrive de maior capacidade e verificar se a transferência de arquivos permanece estável","Testar o leitor atrás, em outro computador e verificar a estabilidade elétrica das portas frontais"],ok:"Perfeito. O objetivo é descobrir se o problema acompanha o leitor, a porta frontal ou o computador.",bad:"Um bom teste deve comparar o mesmo periférico em outros pontos e ambientes."},
+      {q:"Se o leitor funciona perfeitamente em outro computador e nas portas traseiras, mas falha repetidamente nas frontais, qual é a conclusão mais provável?",a:1,opts:["Defeito intermitente do leitor, porque o periférico pode funcionar normalmente em algumas portas","Problema no conjunto USB frontal, incluindo cabo, conector interno ou alimentação das portas","Falha do sistema operacional, pois as portas traseiras utilizam drivers diferentes das portas frontais","Problema geral da placa-mãe, já que portas USB frontais e traseiras dependem do mesmo computador"],ok:"Correto. O comportamento isolado aponta para o conjunto frontal e suas conexões.",bad:"O leitor funciona em outros ambientes. A falha acompanha as portas frontais."}
+    ],solution:"Diagnóstico final: falha provável no conjunto de portas USB frontais, cabo ou conexão interna. Ação: inspecionar, testar e substituir/reconectar o conjunto se necessário."
+  }
+];
+
+let caseIndex=0, qIndex=0, answered=0;
+const caseArea=document.getElementById('caseArea');
+const finalArea=document.getElementById('finalArea');
+const progressBar=document.getElementById('progressBar');
+const progressText=document.getElementById('progressText');
+const ticketList=document.getElementById('ticketList');
+
+function renderTickets(finalizado=false){
+  ticketList.innerHTML='';
+  cases.forEach((c,i)=>{
+    const d=document.createElement('div');
+    if(finalizado){
+      d.className='ticket-chip done';
+      d.textContent=`Chamado ${String(i+1).padStart(2,'0')} - Concluído`;
+    } else {
+      d.className='ticket-chip'+(i===caseIndex?' active':'')+(i<caseIndex?' done':'');
+      d.textContent=`Chamado ${String(i+1).padStart(2,'0')} - ${i<caseIndex?'Concluído':i===caseIndex?'Em análise':'Bloqueado'}`;
+    }
+    ticketList.appendChild(d);
+  });
+}
+
+function updateProgress(){
+  progressText.textContent=`${answered}/25`;
+  progressBar.style.width=`${(answered/25)*100}%`;
+}
+
+function renderCase(){
+  renderTickets(); updateProgress();
+  const c=cases[caseIndex], q=c.qs[qIndex];
+  caseArea.innerHTML=`
+    <span class="ticket-badge">Chamado ${caseIndex+1} de 5</span>
+    <h2>${c.title}</h2>
+    <img class="case-image" src="${c.image}" alt="Imagem ilustrativa do chamado técnico">
+    <p class="case-text">${c.text}</p>
+    <div class="question-card">
+      <div class="qnum">Pergunta ${answered+1} de 25</div>
+      <div class="question">${q.q}</div>
+      <div class="options" id="options"></div>
+      <div id="feedback" class="feedback"></div>
+      <button id="nextBtn" class="next-btn">Avançar</button>
+    </div>`;
+  const options=document.getElementById('options');
+  const ordem=q.opts.map((opt,idx)=>({opt,idx})).sort(()=>Math.random()-0.5);
+  ordem.forEach(({opt,idx})=>{
+    const b=document.createElement('button');
+    b.className='option';
+    b.textContent=opt;
+    b.onclick=()=>checkAnswer(idx,b);
+    options.appendChild(b);
+  });
+}
+
+function checkAnswer(idx,button){
+  const q=cases[caseIndex].qs[qIndex];
+  const feedback=document.getElementById('feedback');
+  document.querySelectorAll('.option').forEach(b=>b.classList.remove('wrong','correct'));
+  if(idx===q.a){
+    button.classList.add('correct');
+    feedback.className='feedback ok';
+    feedback.textContent=q.ok;
+    document.querySelectorAll('.option').forEach(b=>b.disabled=true);
+    document.getElementById('nextBtn').classList.add('show');
+  } else {
+    button.classList.add('wrong');
+    feedback.className='feedback bad';
+    feedback.textContent=q.bad+' Tente novamente.';
+  }
+}
+
+document.addEventListener('click',e=>{
+  if(e.target && e.target.id==='nextBtn'){
+    answered++;
+    if(qIndex<4){ qIndex++; renderCase(); }
+    else if(caseIndex<4){ caseIndex++; qIndex=0; renderCase(); }
+    else { showFinal(); }
+  }
+});
+
+function showFinal(){
+  caseArea.style.display='none';
+  finalArea.classList.add('show');
+  updateProgress();
+  renderTickets(true);
+  finalArea.innerHTML=`
+    <span class="ticket-badge">Atividade concluída</span>
+    <h2>Central de chamados estabilizada</h2>
+    <p class="case-text">Você concluiu os 5 chamados da MaceloComputing Tech. O objetivo não era decorar respostas, mas aplicar uma sequência profissional de raciocínio: observar o sintoma, formular hipóteses, consultar especificações, testar, intervir e validar.</p>
+    <div class="summary-grid">
+      ${cases.map((c,i)=>`<div class="summary-card"><h3>Chamado ${i+1}</h3><p>${c.solution}</p></div>`).join('')}
+    </div>
+    <div class="finish"><strong>Conclusão técnica</strong><br><br>Uma boa manutenção não começa pela troca de peças. Ela começa pelo diagnóstico. O técnico precisa reunir evidências, testar hipóteses, consultar manuais, respeitar EPI e ESD, documentar o atendimento e só então definir a melhor intervenção.</div>
+  `;
+}
+
+renderCase();
+</script>
+</body>
+</html>
