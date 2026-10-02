@@ -63,7 +63,7 @@ Os alunos deverão justificar suas decisões e perceber que um diagnóstico adeq
 
 ## Parte 2 - Simulador de chamados técnicos em HTML
 
-https://rodheisenberg.github.io/atividade_pratica_ManutencaodeComputadore/index.html 
+https://rodheisenberg.github.io/AP-MN-SENAI/index.html 
 
 Na segunda etapa, cada aluno deverá resolver individualmente uma sequência de chamados técnicos da empresa fictícia **MaceloComputing Tech**.
 
